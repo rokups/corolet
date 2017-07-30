@@ -10,10 +10,34 @@ def main():
 
 
 @goroutine
+def except_goroutine():
+    raise ValueError('[except_goroutine] exception thrown')
+
+
+@asyncio.coroutine
+def except_coroutine():
+    raise ValueError('[except_coroutine] exception thrown')
+
+
+@goroutine
 def myclet(num):
     print('[myclet] start with num =', num)
     result = yield_from(subcoro(num))
     print('[myclet] result =', result)
+    try:
+        yield_from(except_goroutine())
+    except ValueError as e:
+        print(str(e))
+    else:
+        raise SystemError()
+
+    try:
+        yield_from(except_coroutine())
+    except ValueError as e:
+        print(str(e))
+    else:
+        raise SystemError()
+
     subfunc_sleep(.5)
     return result * 2
 

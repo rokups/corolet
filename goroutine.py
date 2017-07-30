@@ -59,9 +59,14 @@ def goroutine(func):
         while not glet.dead:
             if isinstance(glet_result, YieldFromRequest):
                 # Wait for the result of the future.
-                future_result = yield from glet_result.future
-                # Send the future's result back to our function's greenlet.
-                glet_result = glet.switch(future_result)
+                try:
+                    future_result = yield from glet_result.future
+                except Exception as e:
+                    # yield_from(future) raised an exception. Propagate it back to yield_from() to be re-raised.
+                    glet_result = glet.switch(e)
+                else:
+                    # Send the future's result back to our function's greenlet.
+                    glet_result = glet.switch(future_result)
             else:
                 raise GoroutineError("unexpected result from goroutine: {!r}".format(glet_result))
 
@@ -87,6 +92,8 @@ def yield_from(future):
         raise GoroutineError("cannot yield_from outside a goroutine or greenlet")
     call = YieldFromRequest(future)
     result = glet.parent.switch(call)
+    if isinstance(result, Exception):
+        raise result
     return result
 
 
