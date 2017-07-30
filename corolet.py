@@ -3,17 +3,21 @@ import functools
 import warnings
 import greenlet
 
+
 class CoroletGreenlet(greenlet.greenlet):
     """Subclass of greenlet used by corolets."""
+
 
 class CoroletError(RuntimeError):
     """Error while running corolet."""
 
-class YieldFromRequest:
+
+class YieldFromRequest(object):
     """Request to yield from an asyncio.Future."""
-    
+
     def __init__(self, future):
         self.future = future
+
 
 def corolet(func):
     """Decorator to create a corolet."""
@@ -36,31 +40,32 @@ def corolet(func):
                 # Send the future's result back to our function's greenlet.
                 glet_result = glet.switch(future_result)
             else:
-                raise CoroletError("unexpected result from corolet: " +
-                                   "{!r}".format(glet_result))
+                raise CoroletError("unexpected result from corolet: {!r}".format(glet_result))
 
         # Once the greenlet dies, return its result.
         return glet_result
 
     return wrapper
 
+
 def in_corolet():
     """Check if currently within a corolet."""
     glet = greenlet.getcurrent()
     return isinstance(glet, CoroletGreenlet)
 
+
 def yield_from(future):
     """Use instead of `yield from` while within a corolet."""
     glet = greenlet.getcurrent()
     if not isinstance(glet, CoroletGreenlet):
-        warnings.warn("yield_from should only be used within a real corolet",
-                      RuntimeWarning, stacklevel=2)
+        warnings.warn("yield_from should only be used within a real corolet", RuntimeWarning, stacklevel=2)
     parent = glet.parent
     if parent is None:
         raise CoroletError("cannot yield_from outside a corolet or greenlet")
     call = YieldFromRequest(future)
     result = glet.parent.switch(call)
     return result
+
 
 def yield_from_or_block(future):
     """Within a corolet, uses `yield_from`. Otherwise, use blocking call."""
