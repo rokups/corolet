@@ -1,5 +1,5 @@
 import asyncio
-import corolet
+from goroutine import goroutine, yield_from, yield_from_or_block
 
 
 @asyncio.coroutine
@@ -9,10 +9,10 @@ def main():
     print('[main] result =', result)
 
 
-@corolet.corolet
+@goroutine
 def myclet(num):
     print('[myclet] start with num =', num)
-    result = corolet.yield_from(subcoro(num))
+    result = yield_from(subcoro(num))
     print('[myclet] result =', result)
     subfunc_sleep(.5)
     return result * 2
@@ -26,7 +26,7 @@ def subcoro(num):
 
 def subfunc_sleep(time):
     print('[subfunc_sleep] sleeping for', time)
-    corolet.yield_from_or_block(asyncio.sleep(time))
+    yield_from_or_block(asyncio.sleep(time))
     print('[subfunc_sleep] done sleeping')
 
 

@@ -2,13 +2,11 @@ from setuptools import setup
 
 
 setup(
-    name='corolet',
+    name='goroutine',
     version='0.0.1',
-    py_modules=['corolet'],
+    py_modules=['goroutine'],
     install_requires=['greenlet'],
-    author='Ben Pringle',
-    author_email='ben.pringle@gmail.com',
-    url='http://github.com/Pringley/corolet',
+    url='http://github.com/rokups/goroutine',
     description='Use greenlets as coroutines in asyncio',
     license='MIT',
 )
