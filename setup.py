@@ -8,5 +8,6 @@ setup(
     install_requires=['greenlet'],
     url='http://github.com/rokups/goroutine',
     description='Use greenlets as coroutines in asyncio',
+    keywords=['greenlet', 'coroutine', 'asyncio'],
     license='MIT',
 )

@@ -13,7 +13,7 @@ The idea for goroutine was inspired by [greenio](https://github.com/1st1/greenio
 Create goroutines using `goroutine.goroutine` decorator. Instead of the `yield from` keyword, use `goroutine.yield_from`
 to get a result from an `asyncio.Future`.
 
-```python3
+```py3
 import asyncio
 from goroutine import goroutine, yield_from
 
